@@ -1,0 +1,20 @@
+Learning:
+
+ - learning rate
+ - gamma
+ - tau
+
+Replay Memory:
+
+ - batch size
+ - buffer size
+
+Neural network:
+
+ - number hidden layer
+ - number of network in a layer
+ 
+Random:
+
+ - sigma
+ - theta
