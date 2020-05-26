@@ -153,7 +153,8 @@ nb_actor_params, nb_critic_params = manager_nn.get_models_params()
 print('actor parameters = ', nb_actor_params, '; critic_parameters = ', nb_critic_params)
 
 path = './Saved_results/number_agents_' + str(nb_agents)
-path += '/delay_variation_freeze_inputs_2_learning_decrease_learning_rate_10'
+# path += '/delay_variation_freeze_inputs_2_learning_decrease_learning_rate_10'
+path += '/delay_variation'
 path += '/observation_' + str(available_obs)
 path += '/' + str(number_layers) + '_layers_size_' + str(size_layers)
 path += '/learning_rate_actor_10e' + str(int(np.log10(learning_rate_actor))) + '_critic_10e' + str(int(np.log10(learning_rate_critic)))

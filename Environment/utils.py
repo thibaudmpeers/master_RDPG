@@ -52,8 +52,8 @@ class Ornstein_Uhlenbeck:
 
 
 increase_rate_sigma = 0.01
-x = np.arange(1, 9, 2)
-# x = np.arange(1, 6, )
+# x = np.arange(1, 9, 2)
+x = np.arange(1, 6, 1)
 # x = np.array([5])
 mean = 5
 start_delay_variation = 500

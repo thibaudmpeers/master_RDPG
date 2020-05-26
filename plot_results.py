@@ -16,8 +16,8 @@ tau = [1e-1, 1e-2]
 decay_tau = [0]
 
 extended_inputs = [0, 1, 2]
-test_names = ['test1', 'test2', 'test3']
-# test_names = ['test3']
+# test_names = ['test1', 'test2', 'test3']
+test_names = ['test2']
 
 # available_obs = [0, 2]
 available_obs = [0, 1, 2]
@@ -392,7 +392,7 @@ for l_r_a in learning_rate_actor:
                             for extended in extended_inputs:
                                 folder_path = './Saved_results/'
                                 folder_path += 'number_agents_' + str(n)
-                                folder_path += '/freeze_inputs_2_learning_decrease_learning_rate_100'
+                                folder_path += '/delay_variation_freeze_inputs_2_learning_decrease_learning_rate_10'
                                 folder_path += '/observation_' + str(obs)
                                 folder_path += '/3_layers_size_128'
                                 folder_path += '/learning_rate_actor_10e' + str(int(np.log10(l_r_a))) + \

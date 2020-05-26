@@ -68,9 +68,9 @@ class Trainer:
 
     def run_episode(self, save_traj, to_pickle, exploitation, episode_count):
 
-        if episode_count == start_input_2_learning:
-            self.actor_optimizer = torch.optim.Adam(self.actor.parameters(), self.learning_rate_actor/10)
-            self.critic_optimizer = torch.optim.Adam(self.critic.parameters(), self.learning_rate_critic/10)
+        # if episode_count == start_input_2_learning:
+        #     self.actor_optimizer = torch.optim.Adam(self.actor.parameters(), self.learning_rate_actor/10)
+        #     self.critic_optimizer = torch.optim.Adam(self.critic.parameters(), self.learning_rate_critic/10)
 
         observation, initial_state, new_delay = self.env.reset(get_init_state=True, save_traj=save_traj)
         to_pickle['initial_states'].append(initial_state)

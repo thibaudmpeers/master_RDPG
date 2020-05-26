@@ -34,7 +34,7 @@ alpha_critic = [1e-5]
 tau = [1e-2]
 decay_tau = [0]
 # extended_inputs = [0, 1, 2]
-extended_inputs = [2]
+extended_inputs = [0]
 
 threads = []
 
