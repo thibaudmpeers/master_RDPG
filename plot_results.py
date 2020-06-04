@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import os
 from Environment.LoopFollowingAgents import LoopFollowingAgents
+from itertools import product
 
 save = True
 
@@ -10,14 +11,18 @@ n_ex = 20
 
 learning_rate_actor = [1e-2, 1e-3, 1e-4, 1e-5, 1e-6]
 learning_rate_critic = [1e-2, 1e-3, 1e-4, 1e-5, 1e-6]
+adaptive_learning_rate_actor = [1e-2, 1e-3, 1e-4, 1e-5, 1e-6, 1e-7]
+adaptive_learning_rate_critic = [1e-2, 1e-3, 1e-4, 1e-5, 1e-6, 1e-7]
+# adaptive_learning_rate_actor = [1e-2]
+# adaptive_learning_rate_critic = [1e-2]
 # learning_rate_actor = [1e-3]
 # learning_rate_critic = [1e-5]
 tau = [1e-1, 1e-2]
 decay_tau = [0]
 
 extended_inputs = [0, 1, 2]
-# test_names = ['test1', 'test2', 'test3']
-test_names = ['test2']
+test_names = ['test1', 'test2', 'test3']
+# test_names = ['test2']
 
 # available_obs = [0, 2]
 available_obs = [0, 1, 2]
@@ -147,23 +152,23 @@ def save_reward(folder_path, from_pickle):
     # print('mean no delay = ', mean(reward_no_delay))
     # print('mean RL = ', mean(reward_rl))
 
-    f1 = plt.figure(1)
+    fig = plt.figure()
     # plt.plot(episodes, reward_rl)
     plt.plot(episodes, reward_rl, episodes, reward_no_delay, episodes, reward_no_control, episodes,
              reward_no_action)
     plt.legend(('RL', 'no delay', 'no control', 'no action'))
-    # f1.show()
-    # f2 = plt.figure(2)
+    # fig.show()
+    # fig = plt.figure()
     # plt.plot(episodes, nor_reward_rl, episodes, nor_reward_no_delay)
     # plt.legend(('RL', 'no delay'))
-    # f2.show()
+    # fig.show()
     # plt.show()
     save_path = folder_path + 'reward_history_all_RL.png'
-    f1.set_size_inches(20, 14)
-    f1.savefig(save_path)
+    fig.set_size_inches(20, 14)
+    fig.savefig(save_path)
     # plt.show()
-    f1.clf()
-    # f2.clf()
+    plt.close(fig)
+    # fig.close()
 
     for delay, reward_no_control, reward_no_action, reward_no_delay, reward_rl, episodes \
             in zip(range_delay, reward_no_control_split, reward_no_action_split, reward_no_delay_split, reward_rl_split,
@@ -176,7 +181,7 @@ def save_reward(folder_path, from_pickle):
         fig.set_size_inches(20, 14)
         fig.savefig(save_path)
         # plt.show()
-        fig.clf()
+        plt.close(fig)
 
 
 def save_episode_trajector(folder_path, from_pickle, index_episode):
@@ -197,9 +202,9 @@ def save_episode_trajector(folder_path, from_pickle, index_episode):
     # print(execution_times)
     del from_pickle
 
-    # f1 = plt.figure(1)
+    # fig = plt.figure()
     # plt.plot(execution_times)
-    # f1.show()
+    # fig.show()
     save_traj = True
     if save_traj:
 
@@ -222,9 +227,9 @@ def save_episode_trajector(folder_path, from_pickle, index_episode):
                 if np.abs(positions[epi + 1][j] - positions[epi][j]) > d_ref * (n - 1):
                     positions[epi + 1][j] = np.nan
 
-        f2, ax = plt.subplots(4, 2)
+        fig, ax = plt.subplots(4, 2)
         title = 'episode number ' + str(index_episode) + ', active agents ' + str(active_agents)
-        f2.suptitle(title)
+        fig.suptitle(title)
         ax[0][0].plot(time, positions)
         ax[0][0].set_title('Agent Positions')
         ax[0][1].plot(time, speed)
@@ -243,11 +248,11 @@ def save_episode_trajector(folder_path, from_pickle, index_episode):
         ax[3][1].set_title('integral term of the learning agent')
 
         ax[0][0].axis([0, episode_steps * dt, 0, d_ref * n])
-        # f2.show()
+        # fig.show()
         save_path = folder_path + '/episode_' + str(index_episode) + '_delay_' + str(delay_episode)
-        f2.set_size_inches(20, 14)
-        f2.savefig(save_path)
-        f2.clf()
+        fig.set_size_inches(20, 14)
+        fig.savefig(save_path)
+        plt.close(fig)
 
 
 def save_trajectory(folder_path, from_pickle):
@@ -292,79 +297,79 @@ def plot_learning_graphs(folder_path, from_pickle):
 
     value_loss = np.log10(value_loss)
 
-    f1 = plt.figure(1)
+    fig = plt.figure()
     plt.plot(reward_history)
 
     save_path = folder_path + '/reward_history.png'
-    f1.set_size_inches(20, 14)
-    f1.savefig(save_path)
-    f1.clf()
+    fig.set_size_inches(20, 14)
+    fig.savefig(save_path)
+    plt.close(fig)
 
-    f2 = plt.figure(3)
+    fig = plt.figure()
     plt.plot(value_loss)
 
     save_path = folder_path + '/critic_loss_history.png'
-    f2.set_size_inches(20, 14)
-    f2.savefig(save_path)
-    f2.clf()
+    fig.set_size_inches(20, 14)
+    fig.savefig(save_path)
+    plt.close(fig)
 
-    f3 = plt.figure(4)
+    fig = plt.figure()
     plt.plot(policy_loss)
 
     save_path = folder_path + '/actor_loss_history.png'
-    f3.set_size_inches(20, 14)
-    f3.savefig(save_path)
-    f3.clf()
+    fig.set_size_inches(20, 14)
+    fig.savefig(save_path)
+    plt.close(fig)
 
-    f4 = plt.figure(5)
+    fig = plt.figure()
     plt.plot(delay)
 
     save_path = folder_path + '/delai_history.png'
-    f4.set_size_inches(20, 14)
-    f4.savefig(save_path)
-    f4.clf()
+    fig.set_size_inches(20, 14)
+    fig.savefig(save_path)
+    plt.close(fig)
 
-    f5 = plt.figure(6)
+    fig = plt.figure()
     plt.plot(mean_error)
     save_path = folder_path + '/mean_error_history.png'
-    f5.set_size_inches(20, 14)
-    f5.savefig(save_path)
-    f5.clf()
+    fig.set_size_inches(20, 14)
+    fig.savefig(save_path)
+    plt.close(fig)
 
-    f6 = plt.figure(7)
+    fig = plt.figure()
     plt.plot(mean_relative_error)
     save_path = folder_path + '/mean_relative_error_history.png'
-    f6.set_size_inches(20, 14)
-    f6.savefig(save_path)
-    f6.clf()
+    fig.set_size_inches(20, 14)
+    fig.savefig(save_path)
+    plt.close(fig)
 
-    f5 = plt.figure(5)
+    fig = plt.figure()
     for plot_delay in range(number_delays):
         plt.plot(episodes_delays[plot_delay], rewards_delays[plot_delay], label=str(range_delay[plot_delay]))
     plt.legend()
     save_path = folder_path + 'reward_delay.png'
-    f5.set_size_inches(20, 14)
-    f5.savefig(save_path)
+    fig.set_size_inches(20, 14)
+    fig.savefig(save_path)
     # plt.show()
-    f5.clf()
+    plt.close(fig)
 
     # if save:
     #     save_path = folder_path + '/reward_history.png'
-    #     f1.set_size_inches(20, 14)
-    #     f1.savefig(save_path)
-    #     f1.clf()
+    #     fig.set_size_inches(20, 14)
+    #     fig.savefig(save_path)
+    #     fig.close()
     #     save_path = folder_path + '/critic_loss_history.png'
-    #     f2.set_size_inches(20, 14)
-    #     f2.savefig(save_path)
-    #     f2.clf()
+    #     fig.set_size_inches(20, 14)
+    #     fig.savefig(save_path)
+    #     fig.close()
     #     save_path = folder_path + '/actor_loss_history.png'
-    #     f3.set_size_inches(20, 14)
-    #     f3.savefig(save_path)
-    #     f3.clf()
+    #     fig.set_size_inches(20, 14)
+    #     fig.savefig(save_path)
+    #     fig.close()
     #     save_path = folder_path + '/delai_history.png'
-    #     f4.set_size_inches(20, 14)
-    #     f4.savefig(save_path)
-    #     f4.clf()
+    #     fig.set_size_inches(20, 14)
+    #     fig.savefig(save_path)
+    #     fig.close()
 
 
 def action_on_pickle(folder_path, count, params):
@@ -382,26 +387,47 @@ def action_on_pickle(folder_path, count, params):
 
 
 i = [0]
-for l_r_a in learning_rate_actor:
-    for l_r_c in learning_rate_critic:
-        for t in tau:
-            for decay_t in decay_tau:
-                for obs in available_obs:
-                    for n in number_agents:
-                        for name in test_names:
-                            for extended in extended_inputs:
-                                folder_path = './Saved_results/'
-                                folder_path += 'number_agents_' + str(n)
-                                folder_path += '/delay_variation_freeze_inputs_2_learning_decrease_learning_rate_10'
-                                folder_path += '/observation_' + str(obs)
-                                folder_path += '/3_layers_size_128'
-                                folder_path += '/learning_rate_actor_10e' + str(int(np.log10(l_r_a))) + \
-                                               '_critic_10e' + str(int(np.log10(l_r_c)))
-                                folder_path += '/tau_10e' + str(int(np.log10(t)))
-                                folder_path += '_decay_tau_' + str(decay_t)
-                                folder_path += '/input_' + str(extended) + '/'
-                                folder_path += name + '/'
-                                # print(folder_path)
-                                action_on_pickle(folder_path, i, n)
+
+for n, l_r_a, l_r_c, t, decay_t, obs, extended, adap_alp_actor, adap_alp_critic, name \
+        in product(number_agents, learning_rate_actor, learning_rate_critic, tau, decay_tau, available_obs, extended_inputs,
+                   adaptive_learning_rate_actor, adaptive_learning_rate_critic, test_names):
+    folder_path = './Saved_results/'
+    folder_path += 'number_agents_' + str(n)
+    folder_path += '/test_parameters'
+    folder_path += '/delay_variation'
+    folder_path += '/observation_' + str(obs)
+    folder_path += '/3_layers_size_128'
+    folder_path += '/learning_rate_actor_10e' + str(int(np.log10(l_r_a))) + \
+                   '_critic_10e' + str(int(np.log10(l_r_c)))
+    folder_path += '/tau_10e' + str(int(np.log10(t)))
+    folder_path += '_decay_tau_' + str(decay_t)
+    folder_path += '/adaptive_learning_rate_actor_10e' + str(int(np.log10(adap_alp_actor)))
+    folder_path += '_critic_10e' + str(int(np.log10(adap_alp_critic)))
+    folder_path += '/input_' + str(extended) + '/'
+    folder_path += name + '/'
+    # print(folder_path)
+    action_on_pickle(folder_path, i, n)
+
+# for l_r_a in learning_rate_actor:
+#     for l_r_c in learning_rate_critic:
+#         for t in tau:
+#             for decay_t in decay_tau:
+#                 for obs in available_obs:
+#                     for n in number_agents:
+#                         for name in test_names:
+#                             for extended in extended_inputs:
+#                                 folder_path = './Saved_results/'
+#                                 folder_path += 'number_agents_' + str(n)
+#                                 folder_path += '/delay_variation_freeze_inputs_2_learning_decrease_learning_rate_10'
+#                                 folder_path += '/observation_' + str(obs)
+#                                 folder_path += '/3_layers_size_128'
+#                                 folder_path += '/learning_rate_actor_10e' + str(int(np.log10(l_r_a))) + \
+#                                                '_critic_10e' + str(int(np.log10(l_r_c)))
+#                                 folder_path += '/tau_10e' + str(int(np.log10(t)))
+#                                 folder_path += '_decay_tau_' + str(decay_t)
+#                                 folder_path += '/input_' + str(extended) + '/'
+#                                 folder_path += name + '/'
+#                                 # print(folder_path)
+#                                 action_on_pickle(folder_path, i, n)
 
 print(i)

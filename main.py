@@ -41,6 +41,8 @@ parser.add_argument('-ex', '--only_exploitation', action='store_true')
 parser.add_argument('-act_ag', '--active_agents', type=int, nargs='*')
 parser.add_argument('-l_actor', '--learning_rate_actor', type=float)
 parser.add_argument('-l_critic', '--learning_rate_critic', type=float)
+parser.add_argument('-l_adap_critic', '--adaptive_learning_rate_critic', type=float)
+parser.add_argument('-l_adap_actor', '--adaptive_learning_rate_actor', type=float)
 parser.add_argument('-tau', '--tau_ddpg', type=float)
 parser.add_argument('-k_tau', '--decay_tau', type=float)
 parser.add_argument('-inputs', '--extended_inputs', type=int)
@@ -109,6 +111,10 @@ learning_rate_actor = args.learning_rate_actor if args.learning_rate_actor else 
 
 learning_rate_critic = args.learning_rate_critic if args.learning_rate_critic else 1e-5
 
+adaptive_learning_rate_critic = args.adaptive_learning_rate_critic if args.adaptive_learning_rate_critic else 1e-6
+
+adaptive_learning_rate_actor = args.adaptive_learning_rate_actor if args.adaptive_learning_rate_actor else 1e-6
+
 tau = args.tau_ddpg if args.tau_ddpg else 1e-5
 
 decay_tau = args.decay_tau if args.decay_tau else 0
@@ -134,12 +140,15 @@ memory = Memory(size=size_replay_memory, number_steps=number_steps, observation_
                 action_dim=action_dim, extended_inputs=extended_inputs, device=device)
 
 comment = '_observation_' + str(available_obs)
-comment += '_learning_rate_actor_10e' + str(int(np.log10(learning_rate_actor))) + '_critic_10e' + str(int(np.log10(learning_rate_critic)))
+comment += '_adaptive_learning_rate_actor_10e' + str(int(np.log10(adaptive_learning_rate_actor)))
+comment += '_critic_10e' + str(int(np.log10(adaptive_learning_rate_critic)))
 tensorboard = SummaryWriter(comment=comment)
 
 manager_nn = train.Trainer(observation_dim=observation_dim, action_dim=action_dim, number_steps=number_steps,
                            memory=memory, device=device, l_r_actor=learning_rate_actor, l_r_critic=learning_rate_critic,
-                           tau=tau, decay_tau=decay_tau, extended_inputs=extended_inputs, env=env, tensorboard=tensorboard)
+                           tau=tau, decay_tau=decay_tau, extended_inputs=extended_inputs, env=env,
+                           adaptive_l_r_critic=adaptive_learning_rate_critic,
+                           adaptive_l_r_actor=adaptive_learning_rate_actor, tensorboard=tensorboard)
 
 learning_params = manager_nn.return_params()
 random_params = manager_nn.noise.return_params()
@@ -153,13 +162,15 @@ nb_actor_params, nb_critic_params = manager_nn.get_models_params()
 print('actor parameters = ', nb_actor_params, '; critic_parameters = ', nb_critic_params)
 
 path = './Saved_results/number_agents_' + str(nb_agents)
-# path += '/delay_variation_freeze_inputs_2_learning_decrease_learning_rate_10'
+path += '/test_parameters'
 path += '/delay_variation'
 path += '/observation_' + str(available_obs)
 path += '/' + str(number_layers) + '_layers_size_' + str(size_layers)
 path += '/learning_rate_actor_10e' + str(int(np.log10(learning_rate_actor))) + '_critic_10e' + str(int(np.log10(learning_rate_critic)))
 path += '/tau_10e' + str(int(np.log10(init_tau)))
 path += '_decay_tau_0' if decay_factor_tau == 0 else '_decay_tau_10e' + str(int(np.log10(decay_factor_tau)))
+path += '/adaptive_learning_rate_actor_10e' + str(int(np.log10(adaptive_learning_rate_actor)))
+path += '_critic_10e' + str(int(np.log10(adaptive_learning_rate_critic)))
 path += '/input_' + str(extended_inputs)
 path += '/test'
 

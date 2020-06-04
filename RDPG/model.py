@@ -72,6 +72,7 @@ class Actor(nn.Module):
             self.rnn_layer = nn.GRUCell(observation_dim + action_dim, self.size_rnn_layer)
         else:
             self.rnn_layer = nn.GRUCell(observation_dim + action_dim + 1, self.size_rnn_layer)
+            self.rnn_layer.weight_ih.data[:, -action_dim - 1:] = torch.zeros((3 * self.size_rnn_layer, action_dim + 1))
 
         self.hidden_layer1 = nn.Linear(self.size_rnn_layer, size_layer1)
         self.hidden_layer1.weight.data = weight_init(self.hidden_layer1.weight.data.size())

@@ -9,7 +9,7 @@ class TBTT_critic:
         self.optimizer = optimizer
         self.steps_traj = number_steps_traj
         self.gamma = gamma
-        self.writer = writer
+        self.tensorboard = writer
 
         self.count = 0
 
@@ -70,20 +70,20 @@ class TBTT_critic:
 
             last_bias[j] = self.critic_model.output_layer.bias.data
             grad_last_bias[j] = self.critic_model.output_layer.bias.grad.data
-            mean_grad_input_2[j] = self.critic_model.rnn_layer.weight_ih.data.grad[:, -2:].mean() / self.steps_traj
-            mean_grad_input_0[j] = self.critic_model.rnn_layer.weight_ih.data.grad[:, :-2].mean() / self.steps_traj
+            mean_grad_input_2[j] = self.critic_model.rnn_layer.weight_ih.grad[:, -2:].mean()
+            mean_grad_input_0[j] = self.critic_model.rnn_layer.weight_ih.grad[:, :-2].mean()
 
             self.optimizer.step()
 
-        self.writer.add_scalar('mean_relative_errors', mean_relative_errors, self.count)
-        self.writer.add_scalar('mean_errors', mean_errors, self.count)
-        self.writer.add_scalar('critic_loss', critic_losses, self.count)
-        self.writer.add_histogram('last_bias', last_bias, self.count)
-        self.writer.add_histogram('grad_last_bias', grad_last_bias, self.count)
-        self.writer.add_histogram('inputs_2_weight', self.critic_model.rnn_layer.weight_ih.data[:, -2:], self.count)
-        self.writer.add_histogram('inputs_2_weight_grad_critic', mean_grad_input_2, self.count)
-        self.writer.add_histogram('inputs_0_weight', self.critic_model.rnn_layer.weight_ih.data[:, :-2], self.count)
-        self.writer.add_histogram('inputs_0_weight_grad_critic', mean_grad_input_0, self.count)
+        self.tensorboard.add_scalar('mean_relative_errors', mean_relative_errors, self.count)
+        self.tensorboard.add_scalar('mean_errors', mean_errors, self.count)
+        self.tensorboard.add_scalar('critic_loss', critic_losses, self.count)
+        self.tensorboard.add_histogram('last_bias', last_bias, self.count)
+        self.tensorboard.add_histogram('grad_last_bias', grad_last_bias, self.count)
+        self.tensorboard.add_histogram('inputs_2_weight_critic', self.critic_model.rnn_layer.weight_ih.data[:, -2:], self.count)
+        self.tensorboard.add_histogram('inputs_2_weight_grad_critic', mean_grad_input_2, self.count)
+        self.tensorboard.add_histogram('inputs_0_weight_critic', self.critic_model.rnn_layer.weight_ih.data[:, :-2], self.count)
+        self.tensorboard.add_histogram('inputs_0_weight_grad_critic', mean_grad_input_0, self.count)
         self.count += 1
 
         return critic_losses.cpu().numpy(), mean_errors, mean_relative_errors
@@ -96,7 +96,7 @@ class TBTT_actor:
         self.optimizer = optimizer
         self.steps_traj = number_steps_traj
         self.critic_model = critic_model
-        self.writer = writer
+        self.tensorboard = writer
 
         self.count = 0
 
@@ -141,13 +141,15 @@ class TBTT_actor:
                 current_grad = states[-i - 1][0].grad
                 states[-i - 2][1].backward(current_grad, retain_graph=True)
 
-            mean_grad_input_2[j] = self.actor_model.rnn_layer.weight_ih.data.grad[:, -2:].mean() / self.steps_traj
-            mean_grad_input_0[j] = self.actor_model.rnn_layer.weight_ih.data.grad[:, :-2].mean() / self.steps_traj
+            mean_grad_input_2[j] = self.actor_model.rnn_layer.weight_ih.grad[:, -2:].mean()
+            mean_grad_input_0[j] = self.actor_model.rnn_layer.weight_ih.grad[:, :-2].mean()
 
             self.optimizer.step()
 
-        self.writer.add_histogram('inputs_2_weight_grad_actor', mean_grad_input_2, self.count)
-        self.writer.add_histogram('inputs_0_weight_grad_actor', mean_grad_input_0, self.count)
+        self.tensorboard.add_histogram('inputs_2_weight_grad_actor', mean_grad_input_2, self.count)
+        self.tensorboard.add_histogram('inputs_0_weight_grad_actor', mean_grad_input_0, self.count)
+        self.tensorboard.add_histogram('inputs_2_weight_actor', self.actor_model.rnn_layer.weight_ih.data[:, -2:], self.count)
+        self.tensorboard.add_histogram('inputs_0_weight_actor', self.actor_model.rnn_layer.weight_ih.data[:, :-2], self.count)
         self.count += 1
 
         return actor_losses.cpu().numpy()

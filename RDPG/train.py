@@ -14,7 +14,8 @@ def get_nn_arch_params():
 class Trainer:
 
     def __init__(self, observation_dim, action_dim, env, number_steps, memory, device, l_r_actor=1e-5, l_r_critic=1e-5,
-                 tau=1e-5, decay_tau=0, extended_inputs=True, tensorboard=None):
+                 tau=1e-5, decay_tau=0, extended_inputs=True, tensorboard=None, adaptive_l_r_actor=None,
+                 adaptive_l_r_critic=None):
 
         self.env = env
 
@@ -29,6 +30,9 @@ class Trainer:
 
         self.learning_rate_actor = l_r_actor
         self.learning_rate_critic = l_r_critic
+
+        self.adaptive_learning_rate_actor = adaptive_l_r_actor
+        self.adaptive_learning_rate_critic = adaptive_l_r_critic
 
         self.observation_dim = observation_dim
         self.action_dim = action_dim
@@ -68,9 +72,9 @@ class Trainer:
 
     def run_episode(self, save_traj, to_pickle, exploitation, episode_count):
 
-        # if episode_count == start_input_2_learning:
-        #     self.actor_optimizer = torch.optim.Adam(self.actor.parameters(), self.learning_rate_actor/10)
-        #     self.critic_optimizer = torch.optim.Adam(self.critic.parameters(), self.learning_rate_critic/10)
+        if episode_count == start_input_2_learning:
+            self.actor_optimizer = torch.optim.Adam(self.actor.parameters(), self.adaptive_learning_rate_actor)
+            self.critic_optimizer = torch.optim.Adam(self.critic.parameters(), self.adaptive_learning_rate_critic)
 
         observation, initial_state, new_delay = self.env.reset(get_init_state=True, save_traj=save_traj)
         to_pickle['initial_states'].append(initial_state)

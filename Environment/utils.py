@@ -72,7 +72,8 @@ class Delay:
         if self.count <= start_delay_variation:
             return mean
         else:
-            sigma = (self.count - start_delay_variation)*increase_rate_sigma
+            self.count += 1
+            sigma = self.count*increase_rate_sigma
             prob = np.exp(-0.5*((x - mean)/sigma)**2)
             return np.random.choice(x, p=prob/prob.sum())
 
