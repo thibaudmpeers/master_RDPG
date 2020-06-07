@@ -4,6 +4,7 @@ import numpy as np
 import os
 from Environment.LoopFollowingAgents import LoopFollowingAgents
 from itertools import product
+from Environment.utils import Delay
 
 save = True
 
@@ -90,12 +91,17 @@ def save_reward(folder_path, from_pickle):
 
     initial_states = from_pickle['initial_states']
 
-    env_no_control = LoopFollowingAgents(available_obs=0, number_agents=n, random_start=random_start, dt=dt, d_ref=d_ref,
-                                         local_time_step=local_dt, gains_reward=gains_reward, number_steps=number_steps)
+    delay_module = Delay()
+
+    env_no_control = LoopFollowingAgents(available_obs=0, number_agents=n, random_start=random_start, dt=dt,
+                                         d_ref=d_ref, local_time_step=local_dt, gains_reward=gains_reward,
+                                         number_steps=number_steps, delay=delay_module)
     env_no_action = LoopFollowingAgents(available_obs=0, number_agents=n, random_start=random_start, dt=dt, d_ref=d_ref,
-                                        local_time_step=local_dt, gains_reward=gains_reward, number_steps=number_steps)
+                                        local_time_step=local_dt, gains_reward=gains_reward, number_steps=number_steps,
+                                        delay=delay_module)
     env_no_delay = LoopFollowingAgents(available_obs=0, number_agents=n, random_start=random_start, dt=dt, d_ref=d_ref,
-                                       local_time_step=local_dt, gains_reward=gains_reward, number_steps=number_steps)
+                                       local_time_step=local_dt, gains_reward=gains_reward, number_steps=number_steps,
+                                       delay=delay_module)
 
     [kp, kd] = env_no_control.feedback_params()
     #

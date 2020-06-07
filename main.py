@@ -12,6 +12,7 @@ import RDPG.train as train
 from RDPG.train import get_nn_arch_params
 from Environment.LoopFollowingAgents import LoopFollowingAgents
 from Environment.utils import get_random_param
+from Environment.utils import Delay
 sys.path.append(os.getcwd())
 
 t_init = time.time()
@@ -127,9 +128,11 @@ time_step = 0.025
 local_time_step = 0.0125
 dist_ref = 2
 
+delay = Delay()
+
 env = LoopFollowingAgents(available_obs=available_obs, number_agents=nb_agents, random_start=random_start, dt=time_step,
                           d_ref=dist_ref, local_time_step=local_time_step, active_agents=active_agents,
-                          gains_reward=gains, number_steps=number_steps)
+                          gains_reward=gains, number_steps=number_steps, delay=delay)
 
 size_replay_memory = 100
 

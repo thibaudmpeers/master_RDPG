@@ -2,7 +2,7 @@ import numpy as np
 import pygame
 import matplotlib.pyplot as plt
 from matplotlib.colors import to_rgba
-from Environment.utils import Delay
+# from Environment.utils import Delay
 
 resolution = (750, 750)
 middle_screen = int(resolution[0] / 2), int(resolution[0] / 2)
@@ -17,7 +17,7 @@ agent_radius = 10
 class LoopFollowingAgents:
     def __init__(self, available_obs, number_agents=None, random_start=None, dt=0.025, d_ref=2, local_time_step=0.0125,
                  active_agents=None, gains_reward=None, reward_analysis=False, perturbations=False,
-                 load_agent=None, number_steps=1000):
+                 load_agent=None, number_steps=1000, delay=None):
 
         self.available_obs = available_obs
 
@@ -40,7 +40,7 @@ class LoopFollowingAgents:
             print('Invalid parameter dt and local_time_step')
 
         self.dt = self.steps_action * self.local_dt
-        self.delay = Delay()
+        self.delay = delay
         # self.steps_delay = int(round(delay / self.dt)) + 1
 
         # computation of B
