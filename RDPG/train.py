@@ -14,7 +14,7 @@ def get_nn_arch_params():
 class Trainer:
 
     def __init__(self, observation_dim, action_dim, env, number_steps, memory, device, l_r_actor=1e-5, l_r_critic=1e-5,
-                 tau=1e-5, decay_tau=0, extended_inputs=True, tensorboard=None, adaptive_l_r_actor=None,
+                 tau=1e-5, decay_tau=0, extended_inputs=2, tensorboard=None, adaptive_l_r_actor=None,
                  adaptive_l_r_critic=None):
 
         self.env = env

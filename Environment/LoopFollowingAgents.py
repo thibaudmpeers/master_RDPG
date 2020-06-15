@@ -2,7 +2,7 @@ import numpy as np
 import pygame
 import matplotlib.pyplot as plt
 from matplotlib.colors import to_rgba
-# from Environment.utils import Delay
+from Environment.utils import gaussian_noise
 
 resolution = (750, 750)
 middle_screen = int(resolution[0] / 2), int(resolution[0] / 2)
@@ -164,8 +164,8 @@ class LoopFollowingAgents:
 
     def step(self, action, current_step):  # action is the variation of d_ref on the agent 0
 
-        actions_u = np.zeros(self.N)
-        actions_u[self.action_agents] = action
+        actions_u = gaussian_noise(dim=self.N, std=0.1)
+        actions_u[self.action_agents] += action.reshape(self.action_space)
 
         if self.save_trajectory:
             self.info_trajectory['action'][current_step] = action.copy()
@@ -187,7 +187,7 @@ class LoopFollowingAgents:
             positions += self.local_dt * speeds
             positions = positions % self.length_env
 
-            speeds += self.local_dt * (delayed_u - self.speed_damping * speeds)
+            speeds += self.local_dt * (delayed_u - self.speed_damping * speeds) + gaussian_noise(dim=self.N, std=0.01)
             speeds = np.clip(speeds, -self.max_speed, self.max_speed)
 
         new_error_positions, new_error_speeds = self.error_computation(positions=positions)

@@ -1,13 +1,8 @@
 import numpy as np
 
 
-class Gaussian_noise:
-    def __init__(self, action_dim, std=0.2):
-        self.action_dim = action_dim
-        self.std = std
-
-    def sample(self):
-        return np.random.randn(self.action_dim) * self.std
+def gaussian_noise(dim, std):
+    return np.random.randn(dim) * std
 
 
 class Load_disturbance:
@@ -72,8 +67,7 @@ class Delay:
         if self.count <= start_delay_variation:
             return mean
         else:
-            self.count += 1
-            sigma = self.count*increase_rate_sigma
+            sigma = (self.count - start_delay_variation)*increase_rate_sigma
             prob = np.exp(-0.5*((x - mean)/sigma)**2)
             return np.random.choice(x, p=prob/prob.sum())
 
